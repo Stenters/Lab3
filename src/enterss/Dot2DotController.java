@@ -10,12 +10,14 @@ package enterss;
 
 
 import javafx.application.Platform;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyEvent;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.scene.canvas.Canvas;
@@ -152,5 +154,14 @@ public class Dot2DotController {
             alert.setContentText("Error with loading: Unknown filepath");
             alert.showAndWait();
         }
+    }
+
+    public void handleSave() {
+        //TODO
+    }
+
+    public void checkEnter(KeyEvent keyEvent) {
+        //TODO
+
     }
 }
