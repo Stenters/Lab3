@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.canvas.Canvas?>
 <?import javafx.scene.control.Button?>
@@ -9,7 +10,6 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
-<?xml version="1.0" encoding="UTF-8"?>
 
 <VBox prefHeight="650.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="enterss.Dot2DotController">
     <MenuBar prefHeight="50" VBox.vgrow="NEVER">
@@ -24,11 +24,11 @@
         </Menu>
     </MenuBar>
     <AnchorPane VBox.vgrow="ALWAYS">
-        <Canvas fx:id="canvas" height="1280.0" layoutY="-7.0" pickOnBounds="true" width="640.0" />
-      <HBox prefHeight="25.0" prefWidth="300.0" AnchorPane.leftAnchor="0.0">
+        <Canvas fx:id="canvas" height="1280.0" pickOnBounds="true" width="600.0" />
+      <HBox disable="true" fx:id="nodeHBox" prefHeight="25.0" prefWidth="300.0" AnchorPane.leftAnchor="0.0">
          <children>
             <Label prefHeight="25.0" prefWidth="150.0" text="Number of Nodes to Show: " />
-            <TextArea fx:id="nodeNumberTextArea" minHeight="-Infinity" onKeyPressed="#checkEnter" prefHeight="8.0" prefWidth="50.0" />
+            <TextArea fx:id="nodeText" minHeight="-Infinity" onKeyPressed="#checkEnter" prefHeight="8.0" prefWidth="50.0" />
             <Button mnemonicParsing="false" onAction="#handleReload" text="Reload">
                <HBox.margin>
                   <Insets left="45.0" />
@@ -36,6 +36,6 @@
             </Button>
          </children>
       </HBox>
-      <Label fx:id="nodeLabel" prefHeight="25.0" text="Nodes: 0" AnchorPane.rightAnchor="0.0" />
+      <Label fx:id="nodeCounter" prefHeight="25.0" text="Nodes: 0" AnchorPane.rightAnchor="0.0" />
     </AnchorPane>
 </VBox>

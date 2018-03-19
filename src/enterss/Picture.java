@@ -10,15 +10,13 @@ package enterss;
 
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-
 import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.ListIterator;
 import java.util.Scanner;
 import java.util.stream.Stream;
 
@@ -58,11 +56,10 @@ public class Picture {
     /**
      * Method to load a picture from file
      * @param file the file to load from
-     * @throws FileNotFoundException if the file is invalid
      * @throws NumberFormatException if the file is incorrectly formatted
      * @throws IOException if the file is inaccessible
      */
-    public void load(File file) throws FileNotFoundException, NumberFormatException, IOException {
+    public void load(File file) throws NumberFormatException, IOException {
         Stream<String> lines = Files.lines(Paths.get(file.getAbsolutePath()));
         Scanner reader = new Scanner(file);
         double width = PREF_WIDTH;
@@ -83,8 +80,8 @@ public class Picture {
     public void drawDots(Canvas canvas){
         GraphicsContext gc = canvas.getGraphicsContext2D();
         for (Dot d: dots) {
-            gc.fillOval((d.getX() * canvas.getWidth()) - ADJUSTMENT,
-                    (d.getY() * canvas.getHeight()) - ADJUSTMENT, DOT_DIAMETER, DOT_DIAMETER);
+            gc.fillOval(d.getX() - ADJUSTMENT,
+                    d.getY() - ADJUSTMENT, DOT_DIAMETER, DOT_DIAMETER);
         }
     }
 
@@ -98,11 +95,11 @@ public class Picture {
         double height = canvas.getHeight();
         int last = dots.size() - 1;
         for (int i = 1; i <= last; i++) {
-            gc.strokeLine(dots.get(i - 1).getX() * width, dots.get(i - 1).getY() * height,
-                    dots.get(i).getX() * width, dots.get(i).getY() * height);
+            gc.strokeLine(dots.get(i - 1).getX(), dots.get(i - 1).getY(),
+                    dots.get(i).getX(), dots.get(i).getY());
         }
-        gc.strokeLine(dots.get(last).getX() * width, dots.get(last).getY() * height,
-                dots.get(0).getX() * width, dots.get(0).getY() * height);
+        gc.strokeLine(dots.get(last).getX(), dots.get(last).getY(),
+                dots.get(0).getX(), dots.get(0).getY());
 
     }
 
@@ -111,24 +108,39 @@ public class Picture {
      * @param numberDesired the number of nodes to remove
      * @throws IllegalArgumentException if the number of nodes is less than 3
      */
-    public void removeDots(int numberDesired) throws IllegalArgumentException {
+    public void removeDots(double numberDesired) throws IllegalArgumentException {
         if (numberDesired < 3){
             throw new IllegalArgumentException("Too few dots");
         }
-        ListIterator<Dot> iterator = dots.listIterator();
-        while (numberDesired != dots.size()){
-            for (Dot dot : dots) {
-                if (!iterator.hasPrevious()){
-                    dot.calculateCriticalValue(dots.get(dots.size() - 1), iterator.next());
-                }
-                if (!iterator.hasNext()){
-                    dot.calculateCriticalValue(iterator.previous(), dots.get(0));
-                }
 
-                dot.calculateCriticalValue(iterator.previous(), iterator.next());
+
+        while (numberDesired < dots.size()){
+
+            int last = dots.size() - 1;
+
+            dots.get(0).calculateCriticalValue(dots.get(last), dots.get(1));
+
+            for (int i = 1; i < dots.size() - 1; i++) {
+
+                dots.get(i).calculateCriticalValue(dots.get(i - 1), dots.get(i + 1));
             }
 
+            dots.get(last).calculateCriticalValue(dots.get(last - 1), dots.get(0));
+
             dots.stream().min(Comparator.comparing(Dot::getCriticalValue)).ifPresent(dots::remove);
+        }
+    }
+
+    /**
+     * Logic for saving picture
+     * @param file the file to save to
+     * @throws IOException if file doesn't exist
+     *          (Should never get thrown)
+     */
+    public void save(File file) throws IOException {
+        FileWriter writer = new FileWriter(file);
+        for (Dot d :dots) {
+            writer.write(String.format("%s, %s", d.getX(), d.getY()));
         }
     }
 }

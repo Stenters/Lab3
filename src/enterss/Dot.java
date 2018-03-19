@@ -40,16 +40,12 @@ public class Dot {
      * @return the critical value of the node
      */
     public double calculateCriticalValue(Dot previous, Dot next){
-        double d12;
-        double d23;
-        double d13;
-
-        d12 = Math.sqrt(Math.pow(this.x - previous.x, 2) + Math.pow(this.y - previous.y, 2));
-        d23 = Math.sqrt(Math.pow(next.x - this.x, 2) + Math.pow(next.y - this.y, 2));
-        d13 = Math.sqrt(Math.pow(next.x - previous.x, 2) + Math.pow(next.y - previous.y, 2));
+        double d12 = Math.sqrt(Math.pow(this.x - previous.x, 2) + Math.pow(this.y - previous.y, 2));
+        double d23 = Math.sqrt(Math.pow(next.x - this.x, 2) + Math.pow(next.y - this.y, 2));
+        double d13 = Math.sqrt(Math.pow(next.x - previous.x, 2) + Math.pow(next.y - previous.y, 2));
 
         criticalValue = d12 + d23 - d13;
-        return getCriticalValue();
+        return criticalValue;
     }
 
     public double getCriticalValue() {

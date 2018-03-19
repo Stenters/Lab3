@@ -10,14 +10,15 @@ package enterss;
 
 
 import javafx.application.Platform;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
-import javafx.scene.control.TextField;
+import javafx.scene.control.TextArea;
+import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.HBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.scene.canvas.Canvas;
@@ -49,23 +50,29 @@ public class Dot2DotController {
      * The label for the number of nodes showing
      */
     @FXML
-    public Label nodeLabel;
+    public Label nodeCounter;
 
     /**
      * The user input for changing the number of nodes showing
      */
     @FXML
-    public TextField nodeText;
+    public TextArea nodeText;
+
+    /**
+     * The Hbox for editing the number of nodes in the image
+     */
+    @FXML
+    public HBox nodeHBox;
 
     private File file;
     private Picture picture = null;
+    private FileChooser chooser = new FileChooser();
     private ArrayList<Dot> nodeList = new ArrayList<>();
 
 
     @FXML private void handleOpen(){
-        FileChooser chooser = new FileChooser();
-
         try{
+
             chooser.setTitle("Choose an image to load");
             chooser.setInitialDirectory(new File(System.getProperty("user.dir")));
 
@@ -74,23 +81,16 @@ public class Dot2DotController {
                         "DOT Image (*.dot)", "*.dot");
                 chooser.getExtensionFilters().add(dotFilter);
             }
-
-
             file = chooser.showOpenDialog(new Stage());
-            if (file != null){
-                picture = new Picture(nodeList);
+
+            if (file.exists()){
                 load(file);
 
-                clear();
-
-                picture.drawDots(canvas);
-                picture.drawLines(canvas);
-
                 editMenu.setDisable(false);
-                nodeText.setDisable(false);
-
-                nodeLabel.setText("Nodes: " + nodeList.size());
+                nodeHBox.setDisable(false);
+                nodeCounter.setText("Nodes: " + nodeList.size());
             }
+
 
         } catch (NullPointerException e) {
             Alert alert = new Alert(Alert.AlertType.valueOf("ERROR"));
@@ -114,9 +114,13 @@ public class Dot2DotController {
         picture.drawDots(canvas);
     }
 
-    @FXML private void handleNodeInput(){
+    @FXML private void handleNodeInput(Double remove){
         try {
-            picture.removeDots(Integer.parseInt(nodeText.getText()));
+            clear();
+            picture.removeDots(remove);
+            picture.drawDots(canvas);
+            picture.drawLines(canvas);
+            nodeCounter.setText("Nodes: " + nodeList.size());
         } catch (IllegalArgumentException e){
             Alert alert = new Alert(Alert.AlertType.valueOf("ERROR"));
             alert.setHeaderText("Illegal Argument Exception");
@@ -126,8 +130,8 @@ public class Dot2DotController {
     }
 
     @FXML private void handleReload() {
-        clear();
         load(file);
+        nodeCounter.setText("Nodes: " + nodeList.size());
     }
 
     private void clear() {
@@ -137,7 +141,15 @@ public class Dot2DotController {
 
     private void load(File file) {
         try {
+            if(nodeList.size() != 0){
+                nodeList = new ArrayList<>();
+            }
+
+            clear();
+            picture = new Picture(nodeList);
             picture.load(file);
+            picture.drawDots(canvas);
+            picture.drawLines(canvas);
         } catch (FileNotFoundException e){
             Alert alert = new Alert(Alert.AlertType.valueOf("ERROR"));
             alert.setHeaderText("File Not Found Exception");
@@ -156,12 +168,44 @@ public class Dot2DotController {
         }
     }
 
-    public void handleSave() {
-        //TODO
+    @FXML private void handleSave() {
+        try {
+            chooser.setTitle("Choose a file to save to");
+            chooser.setInitialDirectory(new File(System.getProperty("user.dir")));
+            file = chooser.showSaveDialog(new Stage());
+
+            if (file.exists()){
+                picture.save(file);
+            }
+
+        } catch (IOException e){
+            Alert alert = new Alert(Alert.AlertType.valueOf("ERROR"));
+            alert.setHeaderText("Input / Output Exception");
+            alert.setContentText("Error with saving: Unknown filepath");
+            alert.showAndWait();
+        }
     }
 
-    public void checkEnter(KeyEvent keyEvent) {
-        //TODO
+    @FXML private void checkEnter(KeyEvent keyEvent) {
+        try {
+
+            if(keyEvent.getCode().equals(KeyCode.ENTER)){
+                handleReload();
+                double remove = Double.parseDouble(nodeText.getText());
+                handleNodeInput(remove);
+                nodeText.setText("");
+
+            }
+        } catch (NumberFormatException e){
+            Alert alert = new Alert(Alert.AlertType.valueOf("ERROR"));
+            alert.setHeaderText("Number Format Exception");
+            alert.setContentText("Error with removing dots: Illegal number entered: "
+                    + nodeText.getText());
+
+            nodeText.setText("");
+            alert.showAndWait();
+        }
 
     }
+
 }
