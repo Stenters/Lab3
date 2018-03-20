@@ -12,7 +12,6 @@ package enterss;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.TextField;
@@ -27,6 +26,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.logging.FileHandler;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -35,10 +35,6 @@ import java.util.logging.Logger;
  * @version 1.0
  */
 public class Dot2DotController {
-
-
-    private static final Logger LOG = Logger.getLogger(Dot2Dot.class.getName());
-
 
     /**
      * The canvas to draw pictures to for the application
@@ -74,6 +70,7 @@ public class Dot2DotController {
     private Picture picture = null;
     private FileChooser chooser = new FileChooser();
     private ArrayList<Dot> nodeList = new ArrayList<>();
+    private static final Logger LOG = Logger.getLogger(Dot2Dot.class.getName());
 
 
     @FXML
@@ -94,8 +91,12 @@ public class Dot2DotController {
             }
             file = chooser.showOpenDialog(new Stage());
 
+            if (!getExtension(file).equals(".dot")){
+                throw new IOException();
+            }
+
             if (file != null) {
-                load(file);
+                load();
 
                 editMenu.setDisable(false);
                 nodeHBox.setDisable(false);
@@ -104,90 +105,10 @@ public class Dot2DotController {
 
 
         } catch (NullPointerException e) {
-            Alert alert = new Alert(Alert.AlertType.valueOf("ERROR"));
-            alert.setHeaderText("Null Pointer Exception");
-            alert.setContentText("Error with opening: No file selected");
-            alert.showAndWait();
+            LOG.log(Level.SEVERE, "Error with opening: No file selected");
+
         } catch (IOException e) {
-            Alert alert = new Alert(Alert.AlertType.valueOf("ERROR"));
-            alert.setHeaderText("Input Output Exception");
-            alert.setContentText("Error with logger: File doesn't exist");
-            alert.showAndWait();
-        }
-    }
-
-    @FXML
-    private void handleClose() {
-        Platform.exit();
-    }
-
-    @FXML
-    private void handleLines() {
-        clear();
-        picture.drawLines(canvas);
-    }
-
-    @FXML
-    private void handleDots() {
-        clear();
-        picture.drawDots(canvas);
-    }
-
-    @FXML
-    private void handleNodeInput() {
-        try {
-            clear();
-            int remove = Integer.parseInt(nodeText.getText());
-            picture.removeDots(remove);
-            picture.drawDots(canvas);
-            picture.drawLines(canvas);
-            nodeCounter.setText("Nodes: " + nodeList.size());
-        } catch (IllegalArgumentException event) {
-            Alert alert = new Alert(Alert.AlertType.valueOf("ERROR"));
-            alert.setHeaderText("Illegal Argument Exception");
-            alert.setContentText("Error with removing dots: Too few dots selected");
-            alert.showAndWait();
-        }
-    }
-
-    @FXML
-    private void handleReload() {
-        load(file);
-        nodeCounter.setText("Nodes: " + nodeList.size());
-    }
-
-    private void clear() {
-        GraphicsContext gc = canvas.getGraphicsContext2D();
-        gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
-    }
-
-    private void load(File file) {
-        try {
-            if (nodeList.size() != 0) {
-                nodeList = new ArrayList<>();
-            }
-            clear();
-            picture = new Picture(nodeList);
-            picture.load(file);
-            picture.drawDots(canvas);
-            picture.drawLines(canvas);
-
-
-        } catch (FileNotFoundException e) {
-            Alert alert = new Alert(Alert.AlertType.valueOf("ERROR"));
-            alert.setHeaderText("File Not Found Exception");
-            alert.setContentText("Error with loading: No file selected");
-            alert.showAndWait();
-        } catch (NumberFormatException e) {
-            Alert alert = new Alert(Alert.AlertType.valueOf("ERROR"));
-            alert.setHeaderText("Number Format Exception");
-            alert.setContentText("Error with loading: Illegal file selected");
-            alert.showAndWait();
-        } catch (IOException e) {
-            Alert alert = new Alert(Alert.AlertType.valueOf("ERROR"));
-            alert.setHeaderText("Input / Output Exception");
-            alert.setContentText("Error with loading: Unknown filepath");
-            alert.showAndWait();
+            LOG.log(Level.SEVERE, "Error with opening: Illegal file selected");
         }
     }
 
@@ -200,33 +121,96 @@ public class Dot2DotController {
 
             if (file != null) {
                 picture.save(file);
+                LOG.info("File Saved");
             }
 
         } catch (IOException e) {
-            Alert alert = new Alert(Alert.AlertType.valueOf("ERROR"));
-            alert.setHeaderText("Input / Output Exception");
-            alert.setContentText("Error with saving: Unknown filepath");
-            alert.showAndWait();
+            LOG.log(Level.SEVERE, "Error with saving: Illegal filepath");
         }
     }
 
-    @FXML private void checkEnter(KeyEvent keyEvent) {
+    @FXML
+    private void handleClose() {
+        LOG.info("Closing");
+        Platform.exit();
+    }
+
+    @FXML
+    private void handleLines() {
+        clear();
+        picture.drawLines(canvas);
+        LOG.info("Lines only drawn");
+    }
+
+    @FXML
+    private void handleDots() {
+        clear();
+        picture.drawDots(canvas);
+        LOG.info("Dots only drawn");
+    }
+
+    @FXML
+    private void handleNodeInput() {
+        try {
+            clear();
+            picture.removeDots(Integer.parseInt(nodeText.getText()));
+            picture.drawDots(canvas);
+            picture.drawLines(canvas);
+            nodeCounter.setText("Nodes: " + nodeList.size());
+        } catch (IllegalArgumentException e) {
+            LOG.log(Level.SEVERE, "Error with removing dots: Too few dots selected");
+        }
+    }
+
+    @FXML
+    private void checkEnter(KeyEvent keyEvent) {
         try {
 
             if(keyEvent.getCode().equals(KeyCode.ENTER)){
-                handleReload();
+                LOG.info("Enter pressed");
+                load();
                 handleNodeInput();
                 nodeText.setText("");
             }
         } catch (NumberFormatException e){
-            Alert alert = new Alert(Alert.AlertType.valueOf("ERROR"));
-            alert.setHeaderText("Number Format Exception");
-            alert.setContentText("Error with removing dots: Illegal number entered: "
-                    + nodeText.getText());
-
-            nodeText.setText("");
-            alert.showAndWait();
+            LOG.log(Level.SEVERE, "Error with removing dots: Illegal number entered");
         }
+    }
+
+    @FXML
+    private void load() {
+        try {
+            if (nodeList.size() != 0) {
+                nodeList = new ArrayList<>();
+            }
+            clear();
+            picture = new Picture(nodeList);
+            picture.load(file);
+            picture.drawDots(canvas);
+            picture.drawLines(canvas);
+            nodeCounter.setText("Nodes: " + nodeList.size());
+            LOG.info("File Loaded");
+
+        } catch (FileNotFoundException e) {
+            LOG.log(Level.SEVERE, "Error with loading: No file selected");
+        } catch (NumberFormatException e) {
+            LOG.log(Level.SEVERE, "Error with loading: File not formatted correctly: "
+                    + "\t" + e.getMessage());
+        } catch (IOException e) {
+            LOG.log(Level.SEVERE, "Error with loading: File can't be edited");
+        }
+    }
+
+    private void clear() {
+        GraphicsContext gc = canvas.getGraphicsContext2D();
+        gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
+        LOG.info("Canvas cleared");
+    }
+
+    private String getExtension(File file) {
+        String fileName = file.getName();
+        int begin = fileName.indexOf('.');
+        return fileName.substring(begin, fileName.length());
     }
 
 }

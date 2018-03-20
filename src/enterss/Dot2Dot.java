@@ -14,9 +14,6 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
-import java.util.logging.FileHandler;
-import java.util.logging.Logger;
-
 /**
  * Starting point for the Dot2Dot application
  * @author enterss

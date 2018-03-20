@@ -65,10 +65,38 @@ public class Picture {
         while (reader.hasNextLine()){
             String input = reader.nextLine();
             String[] coords = input.split(",");
+
+            if(coords.length != 2) {
+                throw new NumberFormatException("Too many/few coordinates");
+            }
+
+
             double x = width - (Double.parseDouble(coords[0]) * width);
             double y = height - (Double.parseDouble(coords[1]) * height);
+
+            if (x > width || x < 0 || y > height || y < 0){
+                throw new NumberFormatException("Coordinate not between 0 and 1");
+            }
+
             dots.add(new Dot(x, y));
         }
+    }
+
+    /**
+     * Logic for saving picture
+     * @param file the file to save to
+     * @throws IOException if file doesn't exist
+     *          (Should never get thrown)
+     */
+    public void save(File file) throws IOException {
+        FileWriter writer = new FileWriter(file);
+        double x, y;
+        for (Dot d : dots) {
+            x = (width - d.getX()) / width;
+            y = (height - d.getY()) / height;
+            writer.write(String.format("%s, %s%n", x, y));
+        }
+        writer.close();
     }
 
     /**
@@ -129,22 +157,5 @@ public class Picture {
 
             dots.stream().min(Comparator.comparing(Dot::getCriticalValue)).ifPresent(dots::remove);
         }
-    }
-
-    /**
-     * Logic for saving picture
-     * @param file the file to save to
-     * @throws IOException if file doesn't exist
-     *          (Should never get thrown)
-     */
-    public void save(File file) throws IOException {
-        FileWriter writer = new FileWriter(file);
-        double x, y;
-        for (Dot d : dots) {
-            x = (width - d.getX()) / width;
-            y = (height - d.getY()) / height;
-            writer.write(String.format("%s, %s%n", x, y));
-        }
-        writer.close();
     }
 }
