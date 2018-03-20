@@ -6,11 +6,11 @@
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
-<?import javafx.scene.control.TextArea?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
+<?import javafx.scene.control.TextField?>
 <VBox prefHeight="650.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="enterss.Dot2DotController">
     <MenuBar prefHeight="50" VBox.vgrow="NEVER">
         <Menu id="fileMenu" mnemonicParsing="false" text="File">
@@ -28,7 +28,7 @@
       <HBox disable="true" fx:id="nodeHBox" prefHeight="25.0" prefWidth="300.0" AnchorPane.leftAnchor="0.0">
          <children>
             <Label prefHeight="25.0" prefWidth="150.0" text="Number of Nodes to Show: " />
-            <TextArea fx:id="nodeText" minHeight="-Infinity" onKeyPressed="#checkEnter" prefHeight="8.0" prefWidth="50.0" />
+            <TextField fx:id="nodeText" onKeyPressed="#checkEnter" prefHeight="8.0" prefWidth="50.0" />
             <Button mnemonicParsing="false" onAction="#handleReload" text="Reload">
                <HBox.margin>
                   <Insets left="45.0" />

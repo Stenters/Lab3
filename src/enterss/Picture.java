@@ -13,12 +13,9 @@ import javafx.scene.canvas.GraphicsContext;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Scanner;
-import java.util.stream.Stream;
 
 import static enterss.Dot2Dot.PREF_HEIGHT;
 import static enterss.Dot2Dot.PREF_WIDTH;
@@ -34,6 +31,8 @@ public class Picture {
     private static final int DOT_DIAMETER = 10;
     private static final int ADJUSTMENT = 5;
     private ArrayList<Dot> dots;
+    private int width = PREF_WIDTH;
+    private int height = PREF_HEIGHT;
 
     /**
      * Constructor for picture class
@@ -60,10 +59,9 @@ public class Picture {
      * @throws IOException if the file is inaccessible
      */
     public void load(File file) throws NumberFormatException, IOException {
-        Stream<String> lines = Files.lines(Paths.get(file.getAbsolutePath()));
         Scanner reader = new Scanner(file);
-        double width = PREF_WIDTH;
-        double height = PREF_HEIGHT;
+        width = PREF_WIDTH;
+        height = PREF_HEIGHT;
         while (reader.hasNextLine()){
             String input = reader.nextLine();
             String[] coords = input.split(",");
@@ -91,9 +89,11 @@ public class Picture {
      */
     public void drawLines(Canvas canvas){
         GraphicsContext gc = canvas.getGraphicsContext2D();
-        double width = canvas.getWidth();
-        double height = canvas.getHeight();
         int last = dots.size() - 1;
+
+        gc.strokeLine(dots.get(0).getX(), dots.get(0).getY(),
+                dots.get(last).getX(), dots.get(last).getY());
+
         for (int i = 1; i <= last; i++) {
             gc.strokeLine(dots.get(i - 1).getX(), dots.get(i - 1).getY(),
                     dots.get(i).getX(), dots.get(i).getY());
@@ -139,8 +139,12 @@ public class Picture {
      */
     public void save(File file) throws IOException {
         FileWriter writer = new FileWriter(file);
-        for (Dot d :dots) {
-            writer.write(String.format("%s, %s", d.getX(), d.getY()));
+        double x, y;
+        for (Dot d : dots) {
+            x = (width - d.getX()) / width;
+            y = (height - d.getY()) / height;
+            writer.write(String.format("%s, %s%n", x, y));
         }
+        writer.close();
     }
 }

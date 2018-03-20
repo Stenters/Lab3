@@ -14,6 +14,9 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
+import java.util.logging.FileHandler;
+import java.util.logging.Logger;
+
 /**
  * Starting point for the Dot2Dot application
  * @author enterss
@@ -38,6 +41,7 @@ public class Dot2Dot extends Application {
      */
     @Override
     public void start(Stage primaryStage) throws Exception{
+
         Parent root = FXMLLoader.load(getClass().getResource("Dot2DotController.fxml"));
         primaryStage.setTitle("Dot to Dot");
         primaryStage.setScene(new Scene(root, PREF_WIDTH, PREF_HEIGHT + MENU_HEIGHT));
