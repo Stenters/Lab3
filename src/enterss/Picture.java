@@ -13,8 +13,9 @@ import javafx.scene.canvas.GraphicsContext;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.List;
+import java.util.ListIterator;
 import java.util.Scanner;
 
 import static enterss.Dot2Dot.PREF_HEIGHT;
@@ -30,7 +31,7 @@ public class Picture {
 
     private static final int DOT_DIAMETER = 10;
     private static final int ADJUSTMENT = 5;
-    private ArrayList<Dot> dots;
+    private List<Dot> dots;
     private int width = PREF_WIDTH;
     private int height = PREF_HEIGHT;
 
@@ -39,7 +40,7 @@ public class Picture {
      * @param original the original picture
      * @param emptylist the initial arrayList
      */
-    public Picture(Picture original, ArrayList<Dot> emptylist) {
+    public Picture(Picture original, List<Dot> emptylist) {
         emptylist.addAll(original.dots);
         this.dots = emptylist;
     }
@@ -48,7 +49,7 @@ public class Picture {
      * Constructor for picture class
      * @param emptylist the initial list for the picture
      */
-    public Picture(ArrayList<Dot> emptylist){
+    public Picture(List<Dot> emptylist){
         this.dots = emptylist;
     }
 
@@ -134,28 +135,67 @@ public class Picture {
     /**
      * Logic for removing a number of nodes from the picture
      * @param numberDesired the number of nodes to remove
+     * @param iterateType the method to iterate through the list
      * @throws IllegalArgumentException if the number of nodes is less than 3
+     * @throws NullPointerException if no valid iterateType
      */
-    public void removeDots(double numberDesired) throws IllegalArgumentException {
-        if (numberDesired < 3){
+    public void removeDots(int numberDesired, String iterateType) throws IllegalArgumentException{
+
+        if (numberDesired < 3) {
             throw new IllegalArgumentException("Too few dots");
         }
 
+        switch (iterateType) {
+            case "Iterator":
+                while (numberDesired > dots.size()){
+                    calcCritValIter();
+                }
+                break;
+            case "Index":
+                while (numberDesired > dots.size()){
+                    calcCritValIndex();
+                }
+                break;
+        }
 
-        while (numberDesired < dots.size()){
+    }
 
-            int last = dots.size() - 1;
 
-            dots.get(0).calculateCriticalValue(dots.get(last), dots.get(1));
+    private void calcCritValIndex() {
+        int last = dots.size() - 1;
+        dots.get(0).calculateCriticalValue(dots.get(last), dots.get(1));
+        for (int i = 1; i < dots.size() - 1; i++) {
+            dots.get(i).calculateCriticalValue(dots.get(i - 1), dots.get(i + 1));
+        }
+        dots.get(last).calculateCriticalValue(dots.get(last - 1), dots.get(0));
 
-            for (int i = 1; i < dots.size() - 1; i++) {
+        dots.stream().min(Comparator.comparing(Dot::getCriticalValue)).ifPresent(dots::remove);
 
-                dots.get(i).calculateCriticalValue(dots.get(i - 1), dots.get(i + 1));
+    }
+
+    private void calcCritValIter() {
+        ListIterator<Dot> iterator = dots.listIterator();
+            Dot prev;
+            Dot current;
+            Dot next;
+            Dot first = iterator.next();
+            Dot second = iterator.next();
+            while (iterator.hasNext()){
+                prev = iterator.previous();
+                iterator.next();
+                current = iterator.next();
+                iterator.next();
+                next = iterator.previous();
+                current.calculateCriticalValue(prev, next);
             }
-
-            dots.get(last).calculateCriticalValue(dots.get(last - 1), dots.get(0));
+            iterator.previous();
+            Dot secondLast = iterator.previous();
+            iterator.next();
+            Dot last = iterator.next();
+            last.calculateCriticalValue(secondLast, first);
+            first.calculateCriticalValue(last, second);
 
             dots.stream().min(Comparator.comparing(Dot::getCriticalValue)).ifPresent(dots::remove);
         }
-    }
+
 }

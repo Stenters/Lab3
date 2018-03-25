@@ -3,12 +3,11 @@
   <component name="CheckStyle-IDEA">
     <option name="configuration">
       <map>
-        <entry key="active-configuration" value="LOCAL_FILE:C:/Users/enter/OneDrive/Documents/GitHub/CS2852/CS2852_checkStyle-v1.xml:MSOE" />
         <entry key="checkstyle-version" value="8.8" />
         <entry key="copy-libs" value="true" />
         <entry key="location-0" value="BUNDLED:(bundled):Sun Checks" />
         <entry key="location-1" value="BUNDLED:(bundled):Google Checks" />
-        <entry key="location-2" value="LOCAL_FILE:C:/Users/enter/OneDrive/Documents/GitHub/CS2852/CS2852_checkStyle-v1.xml:MSOE" />
+        <entry key="location-2" value="LOCAL_FILE:C:/Users/enterss/Documents/GitHub/CS2852/CE2852_checkStyle.xml:MSOE" />
         <entry key="scan-before-checkin" value="false" />
         <entry key="scanscope" value="JavaOnly" />
         <entry key="suppress-errors" value="false" />

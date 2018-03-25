@@ -10,21 +10,25 @@ package enterss;
 
 
 import javafx.application.Platform;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.Label;
-import javafx.scene.control.Menu;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.HBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.scene.canvas.Canvas;
+
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Optional;
 import java.util.logging.FileHandler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -68,8 +72,10 @@ public class Dot2DotController {
 
     private File file;
     private Picture picture = null;
+    private String listType = "";
+    private String iterateType = "";
     private FileChooser chooser = new FileChooser();
-    private ArrayList<Dot> nodeList = new ArrayList<>();
+    private List<Dot> nodeList = new LinkedList<>();
     private static final Logger LOG = Logger.getLogger(Dot2Dot.class.getName());
 
 
@@ -150,19 +156,6 @@ public class Dot2DotController {
     }
 
     @FXML
-    private void handleNodeInput() {
-        try {
-            clear();
-            picture.removeDots(Integer.parseInt(nodeText.getText()));
-            picture.drawDots(canvas);
-            picture.drawLines(canvas);
-            nodeCounter.setText("Nodes: " + nodeList.size());
-        } catch (IllegalArgumentException e) {
-            LOG.log(Level.SEVERE, "Error with removing dots: Too few dots selected");
-        }
-    }
-
-    @FXML
     private void checkEnter(KeyEvent keyEvent) {
         try {
 
@@ -178,10 +171,59 @@ public class Dot2DotController {
     }
 
     @FXML
+    public void selectArrayIndex() {
+        listType = "Array";
+        iterateType = "Index";
+    }
+
+    @FXML
+    public void selectArrayIter() {
+        listType = "Array";
+        iterateType = "Iterator";
+    }
+
+    @FXML
+    public void selectLinkedIndex() {
+        listType = "Linked";
+        iterateType = "Index";
+    }
+
+    @FXML
+    public void selectLinkedIter() {
+        listType = "Linked";
+        iterateType = "Iterator";
+    }
+
+    @FXML
+    private void handleNodeInput() {
+        try {
+            if(listType.equals("")){
+                getTypes();
+            }
+            switch (listType){
+                case "Array":
+                    picture = new Picture(picture, new ArrayList<>());
+                    break;
+                case "Linked":
+                    picture = new Picture(picture, new LinkedList<>());
+                    break;
+            }
+
+            clear();
+            picture.removeDots(Integer.parseInt(nodeText.getText()),iterateType);
+            picture.drawDots(canvas);
+            picture.drawLines(canvas);
+            nodeCounter.setText("Nodes: " + nodeList.size());
+        } catch (IllegalArgumentException e) {
+            LOG.log(Level.SEVERE, "Error with removing dots: Too few dots selected");
+        }
+    }
+
+    @FXML
     private void load() {
         try {
             if (nodeList.size() != 0) {
-                nodeList = new ArrayList<>();
+                nodeList = new LinkedList<>();
             }
             clear();
             picture = new Picture(nodeList);
@@ -213,4 +255,12 @@ public class Dot2DotController {
         return fileName.substring(begin, fileName.length());
     }
 
+    private void getTypes() {
+        Alert alert = new Alert(Alert.AlertType.WARNING);
+        Button arrayIndex = new Button();
+        Button arratIter = new Button();
+        Button linkedIndex = new Button();
+        Button linkedIter = new Button();
+        Optional<ButtonType> result = alert.showAndWait();
+    }
 }
