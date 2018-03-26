@@ -136,7 +136,7 @@ public class Picture {
      * @param numberDesired the number of nodes to remove
      * @throws IllegalArgumentException if the number of nodes is less than 3
      */
-    public void removeDots(double numberDesired) throws IllegalArgumentException {
+    public void removeDots(int numberDesired) throws IllegalArgumentException {
         if (numberDesired < 3){
             throw new IllegalArgumentException("Too few dots");
         }
@@ -157,5 +157,13 @@ public class Picture {
 
             dots.stream().min(Comparator.comparing(Dot::getCriticalValue)).ifPresent(dots::remove);
         }
+    }
+
+    public long removeDotsArray(int numberDesired) {
+        return 0;
+    }
+
+    public long removeDotsList(int numberDesired) {
+        return 0;
     }
 }

@@ -21,6 +21,7 @@ import javafx.scene.layout.HBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.scene.canvas.Canvas;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -65,6 +66,12 @@ public class Dot2DotController {
      */
     @FXML
     public HBox nodeHBox;
+
+    /**
+     * Label for tracking the time
+     */
+    @FXML
+    public Label timeLabel;
 
     private File file;
     private Picture picture = null;
@@ -152,8 +159,21 @@ public class Dot2DotController {
     @FXML
     private void handleNodeInput() {
         try {
+            long time = 0;
+
+            String type = getListType();
             clear();
-            picture.removeDots(Integer.parseInt(nodeText.getText()));
+
+            if(type.equals("Array")){
+                time = picture.removeDotsArray(Integer.parseInt(nodeText.getText()));
+
+            } else if(type.equals("Linked List")){
+                time = picture.removeDotsList(Integer.parseInt(nodeText.getText()));
+
+            }
+
+            timeLabel.setText("Time (ms): " + time);
+
             picture.drawDots(canvas);
             picture.drawLines(canvas);
             nodeCounter.setText("Nodes: " + nodeList.size());
@@ -211,6 +231,12 @@ public class Dot2DotController {
         String fileName = file.getName();
         int begin = fileName.indexOf('.');
         return fileName.substring(begin, fileName.length());
+    }
+
+    private String getListType() {
+
+
+        return "";
     }
 
 }
