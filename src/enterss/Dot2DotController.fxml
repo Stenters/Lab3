@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.canvas.Canvas?>
 <?import javafx.scene.control.Button?>
@@ -7,16 +6,15 @@
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
-<?import javafx.scene.control.SeparatorMenuItem?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox prefHeight="650.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/9.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="enterss.Dot2DotController">
+<VBox prefHeight="650.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="enterss.Dot2DotController">
     <MenuBar prefHeight="50" VBox.vgrow="NEVER">
         <Menu id="fileMenu" mnemonicParsing="false" text="File">
-            <MenuItem id="openMenuItem" mnemonicParsing="false" onAction="#handleOpen" text="Open…" />
+            <MenuItem id="openMenuItem" mnemonicParsing="false" onAction="#handleOpen" text="Open" />
          <MenuItem mnemonicParsing="false" onAction="#handleSave" text="Save" />
              <MenuItem id="closeMenuItem" mnemonicParsing="false" onAction="#handleClose" text="Close" />
         </Menu>
@@ -24,29 +22,21 @@
               <MenuItem id="linesMenuItem" mnemonicParsing="false" onAction="#handleLines" text="LInes Only" />
               <MenuItem id="dotsMenuItem" mnemonicParsing="false" onAction="#handleDots" text="Dots Only" />
         </Menu>
-      <Menu mnemonicParsing="false" text="Logic">
-        <items>
-          <MenuItem mnemonicParsing="false" onAction="#selectArrayIndex" text="Array List + Index" />
-            <MenuItem mnemonicParsing="false" onAction="#selectArrayIter" text="Array List + Iterator" />
-            <SeparatorMenuItem mnemonicParsing="false" />
-            <MenuItem mnemonicParsing="false" onAction="#selectLinkedIndex" text="Linked List + Index" />
-            <MenuItem mnemonicParsing="false" onAction="#selectLinkedIter" text="Linked List + Iterator" />
-        </items>
-      </Menu>
     </MenuBar>
-    <AnchorPane prefHeight="1307.0" prefWidth="640.0" VBox.vgrow="ALWAYS">
+    <AnchorPane prefHeight="1307.0" prefWidth="600.0" VBox.vgrow="ALWAYS">
         <Canvas fx:id="canvas" height="1263.0" pickOnBounds="true" width="640.0" />
-      <HBox prefHeight="25.0" prefWidth="640.0">
+      <HBox prefHeight="25.0" prefWidth="500.0">
          <children>
             <Label prefHeight="25.0" prefWidth="131.0" text="Number of Nodes" />
             <TextField fx:id="nodeText" disable="true" onKeyPressed="#checkEnter" />
-            <Button mnemonicParsing="false" onAction="#load" prefHeight="25.0" prefWidth="89.0" text="Reload">
+            <Button fx:id="reloadButton" disable="true" mnemonicParsing="false" onAction="#load" prefHeight="25.0" prefWidth="89.0" text="Reload">
                <HBox.margin>
                   <Insets left="45.0" />
                </HBox.margin>
             </Button>
          </children>
       </HBox>
-      <Label fx:id="nodeCounter" text="Nodes: 0" AnchorPane.rightAnchor="0.0" />
+      <Label fx:id="nodeCounter" text="Nodes: 0" AnchorPane.rightAnchor="50.0" />
+      <Label fx:id="timeLabel" text="Time (ns): 0" AnchorPane.rightAnchor="50.0" AnchorPane.topAnchor="20.0" />
     </AnchorPane>
 </VBox>

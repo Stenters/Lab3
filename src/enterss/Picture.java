@@ -136,28 +136,32 @@ public class Picture {
      * Logic for removing a number of nodes from the picture
      * @param numberDesired the number of nodes to remove
      * @param iterateType the method to iterate through the list
+     * @return the time the algorithm took
      * @throws IllegalArgumentException if the number of nodes is less than 3
      * @throws NullPointerException if no valid iterateType
      */
-    public void removeDots(int numberDesired, String iterateType) throws IllegalArgumentException{
+    public long removeDots(int numberDesired, String iterateType) throws IllegalArgumentException{
 
         if (numberDesired < 3) {
             throw new IllegalArgumentException("Too few dots");
         }
 
+        long startTime = System.nanoTime();
+
         switch (iterateType) {
             case "Iterator":
-                while (numberDesired > dots.size()){
+                while (dots.size() > numberDesired){
                     calcCritValIter();
                 }
                 break;
             case "Index":
-                while (numberDesired > dots.size()){
+                while (dots.size() > numberDesired){
                     calcCritValIndex();
                 }
                 break;
         }
 
+        return System.nanoTime() - startTime;
     }
 
 
@@ -174,28 +178,28 @@ public class Picture {
     }
 
     private void calcCritValIter() {
-        ListIterator<Dot> iterator = dots.listIterator();
-            Dot prev;
-            Dot current;
-            Dot next;
-            Dot first = iterator.next();
-            Dot second = iterator.next();
-            while (iterator.hasNext()){
-                prev = iterator.previous();
-                iterator.next();
-                current = iterator.next();
-                iterator.next();
-                next = iterator.previous();
-                current.calculateCriticalValue(prev, next);
-            }
-            iterator.previous();
-            Dot secondLast = iterator.previous();
-            iterator.next();
-            Dot last = iterator.next();
-            last.calculateCriticalValue(secondLast, first);
-            first.calculateCriticalValue(last, second);
-
-            dots.stream().min(Comparator.comparing(Dot::getCriticalValue)).ifPresent(dots::remove);
+        ListIterator<Dot> prevIterator = dots.listIterator();
+        ListIterator<Dot> currentIterator = dots.listIterator();
+        ListIterator<Dot> nextIterator = dots.listIterator();
+        Dot prev;
+        Dot current = new Dot(0, 0);
+        Dot next = new Dot(0, 0);
+        Dot first = currentIterator.next();
+        nextIterator.next();
+        Dot second = nextIterator.next();
+        while (nextIterator.hasNext()){
+            prev = prevIterator.next();
+            current = currentIterator.next();
+            next = nextIterator.next();
+            current.calculateCriticalValue(prev, next);
         }
+        next.calculateCriticalValue(current, first);
+        first.calculateCriticalValue(next, second);
 
+        dots.stream().min(Comparator.comparing(Dot::getCriticalValue)).ifPresent(dots::remove);
+    }
+
+    public List<Dot> getDotList() {
+        return dots;
+    }
 }
