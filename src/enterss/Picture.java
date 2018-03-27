@@ -178,19 +178,16 @@ public class Picture {
     }
 
     private void calcCritValIter() {
-        ListIterator<Dot> prevIterator = dots.listIterator();
-        ListIterator<Dot> currentIterator = dots.listIterator();
-        ListIterator<Dot> nextIterator = dots.listIterator();
+        ListIterator<Dot> iterator = dots.listIterator();
         Dot prev;
-        Dot current = new Dot(0, 0);
-        Dot next = new Dot(0, 0);
-        Dot first = currentIterator.next();
-        nextIterator.next();
-        Dot second = nextIterator.next();
-        while (nextIterator.hasNext()){
-            prev = prevIterator.next();
-            current = currentIterator.next();
-            next = nextIterator.next();
+        Dot current = iterator.next();
+        Dot next = iterator.next();
+        Dot first = current;
+        Dot second = next;
+        while (iterator.hasNext()){
+            prev = current;
+            current = next;
+            next = iterator.next();
             current.calculateCriticalValue(prev, next);
         }
         next.calculateCriticalValue(current, first);
